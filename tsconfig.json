@@ -1,5 +1,4 @@
 {
-  "$schema": "https://json.schemastore.org/tsconfig",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
@@ -19,9 +18,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    },
-    "types": ["vite/client", "node"]
+    }
   },
-  "include": ["src", "types"],
-  "exclude": ["node_modules", "dist", "dist-server"]
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }
