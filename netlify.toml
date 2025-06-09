@@ -1,0 +1,95 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions/api"
+
+[build.environment]
+  NODE_VERSION = "18.0.0"
+  NODE_ENV = "production"
+  PRISMA_GENERATE_FLAG = "true"
+  PRISMA_QUERY_ENGINE_LIBRARY = "/opt/nodejs/node_modules/prisma/libquery_engine-linux-arm64-openssl-1.0.x.so.node"
+  NETLIFY_DEV = "true"
+  # Enable Node.js file system caching for Prisma
+  PRISMA_CLI_QUERY_ENGINE_TYPE = "binary"
+  PRISMA_CLIENT_ENGINE_TYPE = "binary"
+  PRISMA_MIGRATION_ENGINE_BINARY = "/opt/buildhome/.npm/lib/node_modules/prisma/migration-engine-debian-openssl-1.1.x"
+  PRISMA_QUERY_ENGINE_BINARY = "/opt/buildhome/.npm/lib/node_modules/prisma/query-engine-debian-openssl-1.1.x"
+  PRISMA_INTROSPECTION_ENGINE_BINARY = "/opt/buildhome/.npm/lib/node_modules/prisma/introspection-engine-debian-openssl-1.1.x"
+
+# Environment variables for database connection
+[build.environment]
+  DATABASE_URL = "${NEON_DATABASE_URL}"
+  NODE_ENV = "production"
+
+# Required for Prisma to work with Netlify Functions
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client", "@prisma/adapter-neon"]
+  included_files = ["prisma/schema.prisma"]
+  directory = "netlify/functions/api"
+
+# Required for Prisma to work with Netlify Functions
+# Build command for Netlify
+[build]
+  command = "npm run build && cd netlify/functions/api && npm install --production && npx prisma generate"
+  publish = "dist"
+  functions = "netlify/functions/api"
+
+# Required for Prisma to work with Netlify Functions
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client", "@prisma/adapter-neon"]
+  included_files = ["prisma/schema.prisma"]
+  directory = "netlify/functions/api"
+
+# Redirect all API requests to the Netlify Function
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+  force = true
+
+# Handle client-side routing - redirect all other requests to index.html
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Development settings
+[dev]
+  framework = "vite"
+  targetPort = 3000
+  port = 8888
+  publish = "dist"
+  command = "npm run dev"
+  functions = "netlify/functions/api"
+  autoLaunch = true
+  framework = "#custom"
+  targetPort = 3000
+  port = 3001
+  publish = "dist"
+  command = "npm run dev"
+
+# Enable function bundling
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["@prisma/client", "@prisma/adapter-neon"]
+  included_files = ["prisma/schema.prisma"]
+  node_bundler = "esbuild"
+
+# Cache node_modules for faster builds
+[[plugins]]
+  package = "@netlify/plugin-cache"
+  [plugins.inputs]
+    paths = ["node_modules/.cache"]
+
+# Add security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "same-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://*.neon.tech;"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"

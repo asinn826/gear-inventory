@@ -4,11 +4,21 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = env("DATABASE_PROVIDER") == "postgresql" ? "postgresql" : "sqlite"
   url      = env("DATABASE_URL")
+  
+  // For PostgreSQL, you can enable extensions here
+  // extensions = [pg_trgm, uuid_ossp]
+}
+
+// Add this to enable seeding
+generator seed {
+  provider = "ts-node --transpile-only"
+  output   = "../prisma/seed.ts"
 }
 
 model Item {

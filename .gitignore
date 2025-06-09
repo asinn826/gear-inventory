@@ -25,7 +25,17 @@ yarn-error.log*
 # Prisma
 /prisma/.env
 /prisma/migrations/
+!prisma/migrations/.gitkeep
 /src/generated/prisma/
+
+# Netlify
+.netlify/
+.netlify/functions/
+
+# Local development
+.cache/
+.temp/
+.tmp/
 
 # Editor directories and files
 .idea
