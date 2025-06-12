@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
+const { PrismaClient } = pkg;
 import { withAccelerate } from '@prisma/extension-accelerate';
 import { PrismaNeon } from '@prisma/adapter-neon';
 
