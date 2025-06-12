@@ -4,10 +4,11 @@
   "description": "Backend server for Camping Gear Inventory",
   "type": "commonjs",
   "scripts": {
+    "prestart": "node setup.js",
     "start": "NODE_ENV=production node server.js",
     "dev": "node index.mjs",
-    "build": "npx prisma generate",
-    "postinstall": "npx prisma generate"
+    "build": "node setup.js",
+    "postinstall": "node setup.js"
   },
   "dependencies": {
     "@prisma/client": "^6.9.0",
