@@ -2,9 +2,11 @@
 const express = require('express');
 const cors = require('cors');
 const { PrismaClient } = require('@prisma/client');
+const { withAccelerate } = require('@prisma/extension-accelerate');
 
 const app = express();
-const prisma = new PrismaClient();
+// Initialize with Prisma Accelerate for Prisma Data Platform
+const prisma = new PrismaClient().$extends(withAccelerate());
 const PORT = process.env.PORT || 3001;
 
 // Configure CORS for production
