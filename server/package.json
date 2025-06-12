@@ -2,9 +2,10 @@
   "name": "camping-gear-inventory-server",
   "version": "1.0.0",
   "description": "Backend server for Camping Gear Inventory",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "start": "node index.mjs",
+    "start": "NODE_ENV=production node server.js",
+    "dev": "node index.mjs",
     "build": "npx prisma generate",
     "postinstall": "npx prisma generate"
   },
