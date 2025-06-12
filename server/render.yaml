@@ -11,6 +11,10 @@ services:
         fromDatabase:
           name: gear-inventory-db
           property: connectionString
+      - key: DIRECT_URL
+        fromDatabase:
+          name: gear-inventory-db
+          property: connectionString
       # Add any other environment variables you need
 
 databases:

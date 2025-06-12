@@ -7,11 +7,10 @@ import { PrismaNeon } from '@prisma/adapter-neon';
 
 const app = express();
 // Initialize Prisma client based on environment
-const prisma = process.env.NODE_ENV === 'production'
-  ? new PrismaClient().$extends(withAccelerate()) // For Prisma Accelerate in production
-  : new PrismaClient({ 
-      adapter: PrismaNeon() // For local development with Neon
-    });
+let prisma;
+
+// Simple client for all environments - no extensions that might cause issues
+prisma = new PrismaClient();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
