@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { PrismaClient } from '../src/generated/prisma';
 import { withAccelerate } from '@prisma/extension-accelerate';
-import { GearItem } from '../src/types';
 
 const app = express();
 const prisma = new PrismaClient().$extends(withAccelerate());
