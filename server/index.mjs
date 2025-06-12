@@ -1,14 +1,29 @@
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '../src/generated/prisma/index.js';
+import { PrismaClient } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate';
+import { PrismaNeon } from '@prisma/adapter-neon';
 
 const app = express();
-const prisma = new PrismaClient().$extends(withAccelerate());
+// Initialize Prisma client based on environment
+const prisma = process.env.NODE_ENV === 'production'
+  ? new PrismaClient().$extends(withAccelerate()) // For Prisma Accelerate in production
+  : new PrismaClient({ 
+      adapter: PrismaNeon() // For local development with Neon
+    });
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors());
+// Configure CORS for production
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? ['https://gear-inventory.alfredsin.com'] // Replace with your actual Netlify domain
+    : ['http://localhost:5173'], // Default Vite dev server port
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+};
+
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Get all items with their tags

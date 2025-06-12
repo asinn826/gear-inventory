@@ -1,10 +1,16 @@
 import express from 'express';
 import cors from 'cors';
-import { PrismaClient } from '../src/generated/prisma';
+import { PrismaClient } from '@prisma/client';
 import { withAccelerate } from '@prisma/extension-accelerate';
+import { PrismaNeon } from '@prisma/adapter-neon';
 
 const app = express();
-const prisma = new PrismaClient().$extends(withAccelerate());
+// Initialize Prisma client based on environment
+const prisma = process.env.NODE_ENV === 'production'
+  ? new PrismaClient().$extends(withAccelerate()) // For Prisma Accelerate in production
+  : new PrismaClient({ 
+      adapter: PrismaNeon() // For local development with Neon
+    });
 const PORT = process.env.PORT || 3001;
 
 // Middleware
