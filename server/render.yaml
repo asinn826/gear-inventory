@@ -2,8 +2,9 @@ services:
   - type: web
     name: gear-inventory-backend
     env: node
+    rootDir: server
     buildCommand: npm install && npm run build
-    startCommand: NODE_ENV=production npm start
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
