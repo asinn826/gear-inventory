@@ -2,20 +2,14 @@ import React from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 
-const dance = keyframes`
-  0%   { transform: rotate(-5deg) translateY(0px); }
-  25%  { transform: rotate(0deg)  translateY(-14px); }
-  50%  { transform: rotate(5deg)  translateY(0px); }
-  75%  { transform: rotate(0deg)  translateY(-14px); }
-  100% { transform: rotate(-5deg) translateY(0px); }
+const float = keyframes`
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-16px); }
 `;
 
-const squish = keyframes`
-  0%   { transform: scaleX(1)   scaleY(1);    opacity: 0.25; }
-  25%  { transform: scaleX(0.6) scaleY(0.6);  opacity: 0.1;  }
-  50%  { transform: scaleX(1)   scaleY(1);    opacity: 0.25; }
-  75%  { transform: scaleX(0.6) scaleY(0.6);  opacity: 0.1;  }
-  100% { transform: scaleX(1)   scaleY(1);    opacity: 0.25; }
+const shadowFade = keyframes`
+  0%, 100% { opacity: 0.2; transform: scaleX(1); }
+  50%       { opacity: 0.08; transform: scaleX(0.7); }
 `;
 
 const blink = keyframes`
@@ -34,8 +28,7 @@ export const TotoroLoader = () => (
   >
     {/* Totoro */}
     <Box
-      animation={`${dance} 1s ease-in-out infinite`}
-      style={{ transformOrigin: 'center bottom' }}
+      animation={`${float} 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite`}
       display="inline-block"
     >
       <svg
@@ -111,10 +104,10 @@ export const TotoroLoader = () => (
       bg="gray.300"
       borderRadius="full"
       mt="-3"
-      animation={`${squish} 1s ease-in-out infinite`}
+      animation={`${shadowFade} 2.4s cubic-bezier(0.45, 0, 0.55, 1) infinite`}
     />
 
-    <Text mt={5} color="gray.400" fontSize="sm" fontStyle="italic">
+    <Text mt={5} color="gray.600" fontSize="sm">
       Loading your gear…
     </Text>
   </Box>
