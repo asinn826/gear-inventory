@@ -2,9 +2,8 @@ services:
   - type: web
     name: gear-inventory-backend
     env: node
-    rootDir: server
-    buildCommand: npm install && npx prisma generate --no-engine
-    startCommand: npm start
+    buildCommand: cd server && npm install && npx prisma generate --no-engine
+    startCommand: cd server && npm start
     envVars:
       - key: NODE_ENV
         value: production
