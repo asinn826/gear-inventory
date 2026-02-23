@@ -77,7 +77,7 @@ export const App = () => {
             {/* Row 1: title + add button (always) + search+sort on desktop */}
             <Flex align="center" gap={3}>
               <Heading as="h1" size="md" color="teal.600" flexShrink={0} whiteSpace="nowrap">
-                Camping Gear
+                Gear Inventory
               </Heading>
               <Box flex="1" display={{ base: 'none', md: 'block' }}>
                 <SearchAndFilter
