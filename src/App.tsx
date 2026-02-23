@@ -14,6 +14,7 @@ import { InventoryList } from './components/InventoryList';
 import { ItemForm } from './components/ItemForm';
 import { SearchAndFilter } from './components/SearchAndFilter';
 import { TagSidebar } from './components/TagSidebar';
+import { TotoroLoader } from './components/TotoroLoader';
 import { useInventory } from './hooks/useInventory';
 
 export const App = () => {
@@ -25,6 +26,7 @@ export const App = () => {
     items,
     allItems,
     tagGroups,
+    isLoading,
     addItem,
     updateItem,
     deleteItem,
@@ -111,7 +113,8 @@ export const App = () => {
 
         {/* Body */}
         <Container maxW="container.xl" py={{ base: 4, md: 6 }} px={{ base: 3, md: 6 }}>
-          <Flex direction={{ base: 'column', md: 'row' }} gap={6} align="flex-start">
+          {isLoading ? <TotoroLoader /> : null}
+          <Flex direction={{ base: 'column', md: 'row' }} gap={6} align="flex-start" display={isLoading ? 'none' : 'flex'}>
             {/* Sidebar (desktop: sticky left column; mobile: horizontal chips above grid) */}
             <Box
               w={{ base: 'full', md: '180px' }}
