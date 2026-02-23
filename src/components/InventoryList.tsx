@@ -11,6 +11,11 @@ import {
   Button,
   useToast,
   Tooltip,
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from '@chakra-ui/react';
 import { DeleteIcon, EditIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { GearItem } from '../types';
@@ -239,36 +244,50 @@ export const InventoryList = ({
     );
   }
 
-  // All view — grouped by first tag
+  // All view — grouped by first tag, each section collapsible
   return (
-    <Box>
+    <Accordion
+      allowMultiple
+      defaultIndex={Array.from({ length: tagGroups.size }, (_, i) => i)}
+    >
       {[...tagGroups.entries()].map(([tag, tagItems]) => (
-        <Box key={tag} mb={{ base: 6, md: 10 }}>
-          <HStack mb={{ base: 2, md: 3 }} spacing={2} align="center">
-            <Text
-              fontSize="xs"
-              fontWeight="semibold"
-              color="gray.400"
-              textTransform="uppercase"
-              letterSpacing="wider"
-            >
-              {tag}
-            </Text>
-            <Text color="gray.300" fontSize="xs">·</Text>
-            <Text color="gray.400" fontSize="xs">{tagItems.length}</Text>
-          </HStack>
-          <SimpleGrid columns={{ base: 2, lg: 3 }} spacing={{ base: 2, md: 4 }}>
-            {tagItems.map(item => (
-              <ItemCard
-                key={item.id}
-                item={item}
-                onEdit={() => onEditItem(item)}
-                onDelete={() => handleDelete(item.id, item.name)}
-              />
-            ))}
-          </SimpleGrid>
-        </Box>
+        <AccordionItem key={tag} border="none" mb={{ base: 3, md: 6 }}>
+          <AccordionButton
+            px={0}
+            py={2}
+            _hover={{ bg: 'transparent' }}
+            borderBottom="1px solid"
+            borderColor="gray.100"
+          >
+            <HStack flex="1" spacing={2} align="center">
+              <Text
+                fontSize="xs"
+                fontWeight="semibold"
+                color="gray.400"
+                textTransform="uppercase"
+                letterSpacing="wider"
+              >
+                {tag}
+              </Text>
+              <Text color="gray.300" fontSize="xs">·</Text>
+              <Text color="gray.400" fontSize="xs">{tagItems.length}</Text>
+            </HStack>
+            <AccordionIcon color="gray.400" boxSize={4} />
+          </AccordionButton>
+          <AccordionPanel px={0} pt={3} pb={0}>
+            <SimpleGrid columns={{ base: 2, lg: 3 }} spacing={{ base: 2, md: 4 }}>
+              {tagItems.map(item => (
+                <ItemCard
+                  key={item.id}
+                  item={item}
+                  onEdit={() => onEditItem(item)}
+                  onDelete={() => handleDelete(item.id, item.name)}
+                />
+              ))}
+            </SimpleGrid>
+          </AccordionPanel>
+        </AccordionItem>
       ))}
-    </Box>
+    </Accordion>
   );
 };
