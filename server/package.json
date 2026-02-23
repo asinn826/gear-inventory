@@ -9,7 +9,7 @@
     "build": "prisma generate --no-engine"
   },
   "dependencies": {
-    "@prisma/extension-accelerate": "^6.9.0",
+    "@prisma/extension-accelerate": "^3.0.1",
     "@prisma/client": "^6.9.0",
     "cors": "^2.8.5",
     "express": "^5.1.0",
