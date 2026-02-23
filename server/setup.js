@@ -56,7 +56,7 @@ try {
 
   // Run prisma generate
   console.log('Generating Prisma Client...');
-  execSync('npx prisma generate', { stdio: 'inherit' });
+  execSync('npx prisma generate --no-engine', { stdio: 'inherit' });
   
   console.log('Prisma setup completed successfully!');
 } catch (error) {

@@ -6,7 +6,7 @@
   "scripts": {
     "start": "NODE_ENV=production node server.js",
     "dev": "node index.mjs",
-    "build": "prisma generate"
+    "build": "prisma generate --no-engine"
   },
   "dependencies": {
     "@prisma/extension-accelerate": "^6.9.0",
