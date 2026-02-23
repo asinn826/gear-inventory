@@ -4,6 +4,8 @@ import * as api from '../utils/api';
 
 interface UseInventoryReturn {
   items: GearItem[];
+  allItems: GearItem[];
+  tagGroups: Map<string, GearItem[]>;
   isLoading: boolean;
   error: Error | null;
   searchQuery: string;
@@ -26,7 +28,7 @@ export const useInventory = (): UseInventoryReturn => {
   const [error, setError] = useState<Error | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'name', direction: 'asc' });
+  const [sortConfig, setSortConfig] = useState<SortConfig>({ key: 'updatedAt', direction: 'desc' });
 
   // Load items from the API
   const loadItems = useCallback(async () => {
@@ -152,10 +154,53 @@ export const useInventory = (): UseInventoryReturn => {
       });
   }, [items, searchQuery, selectedTags, sortConfig]);
 
+  // Group items by first tag for the "All" view (search-filtered, no tag filter)
+  const tagGroups = useMemo((): Map<string, GearItem[]> => {
+    const filtered = [...items]
+      .filter(item =>
+        !searchQuery ||
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.description?.toLowerCase() || '').includes(searchQuery.toLowerCase())
+      )
+      .sort((a, b) => {
+        if (sortConfig.key === 'name' || sortConfig.key === 'description' || sortConfig.key === 'link') {
+          const aValue = a[sortConfig.key] || '';
+          const bValue = b[sortConfig.key] || '';
+          return sortConfig.direction === 'asc'
+            ? String(aValue).localeCompare(String(bValue))
+            : String(bValue).localeCompare(String(aValue));
+        } else if (sortConfig.key === 'quantity') {
+          return sortConfig.direction === 'asc' ? a.quantity - b.quantity : b.quantity - a.quantity;
+        } else if (sortConfig.key === 'createdAt' || sortConfig.key === 'updatedAt') {
+          return sortConfig.direction === 'asc'
+            ? new Date(a[sortConfig.key]).getTime() - new Date(b[sortConfig.key]).getTime()
+            : new Date(b[sortConfig.key]).getTime() - new Date(a[sortConfig.key]).getTime();
+        }
+        return 0;
+      });
+
+    const groupMap = new Map<string, GearItem[]>();
+    for (const item of filtered) {
+      const key = item.tags.length > 0 ? item.tags[0] : 'Untagged';
+      if (!groupMap.has(key)) groupMap.set(key, []);
+      groupMap.get(key)!.push(item);
+    }
+
+    const sortedEntries = [...groupMap.entries()].sort(([a], [b]) => {
+      if (a === 'Untagged') return 1;
+      if (b === 'Untagged') return -1;
+      return a.localeCompare(b);
+    });
+
+    return new Map(sortedEntries);
+  }, [items, searchQuery, sortConfig]);
+
   const sortedItems = useMemo(() => getFilteredAndSortedItems(), [getFilteredAndSortedItems]);
 
   return {
     items: sortedItems,
+    allItems: items,
+    tagGroups,
     isLoading,
     error,
     searchQuery,

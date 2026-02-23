@@ -1,54 +1,45 @@
-import React, { useState, useMemo, useCallback } from 'react';
-import { ChakraProvider, Box, Container, Heading, Button, useDisclosure } from '@chakra-ui/react';
+import React, { useState, useCallback } from 'react';
+import {
+  ChakraProvider,
+  Box,
+  Container,
+  Heading,
+  Button,
+  Flex,
+  useDisclosure,
+} from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { GearItem } from './types';
 import { InventoryList } from './components/InventoryList';
 import { ItemForm } from './components/ItemForm';
 import { SearchAndFilter } from './components/SearchAndFilter';
+import { TagSidebar } from './components/TagSidebar';
 import { useInventory } from './hooks/useInventory';
 
 export const App = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editingItem, setEditingItem] = useState<GearItem | null>(null);
-  const { 
-    items, 
-    addItem, 
-    updateItem, 
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+
+  const {
+    items,
+    allItems,
+    tagGroups,
+    addItem,
+    updateItem,
     deleteItem,
-    searchQuery, 
-    setSearchQuery, 
-    selectedTags, 
-    setSelectedTags, 
-    sortConfig, 
-    setSortConfig, 
+    searchQuery,
+    setSearchQuery,
+    setSelectedTags,
+    sortConfig,
+    setSortConfig,
     getAllTags,
-    getFilteredAndSortedItems 
   } = useInventory();
-  
-  const filteredItems = useMemo(() => getFilteredAndSortedItems(), [
-    getFilteredAndSortedItems
-  ]);
-  
-  const allTags = useMemo(() => {
-    return getAllTags();
-  }, [getAllTags]);
-  
-  const handleSortChange = useCallback((key: keyof GearItem, direction: 'asc' | 'desc') => {
-    setSortConfig({ key, direction });
-  }, [setSortConfig]);
-  
-  const handleTagsChange = useCallback((tags: string[]) => {
-    setSelectedTags(tags);
+
+  const handleTagSelect = useCallback((tag: string | null) => {
+    setActiveTag(tag);
+    setSelectedTags(tag ? [tag] : []);
   }, [setSelectedTags]);
-  
-  const handleSortConfigChange = useCallback((key: keyof GearItem, direction: 'asc' | 'desc') => {
-    setSortConfig({ key, direction });
-  }, [setSortConfig]);
-  
-  const handleResetFilters = useCallback(() => {
-    setSearchQuery('');
-    setSelectedTags([]);
-  }, [setSearchQuery, setSelectedTags]);
 
   const handleEditItem = (item: GearItem) => {
     setEditingItem(item);
@@ -58,10 +49,8 @@ export const App = () => {
   const handleSubmit = (itemData: Omit<GearItem, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       if (editingItem) {
-        // For updates, preserve the existing ID and timestamps
         updateItem(editingItem.id, itemData);
       } else {
-        // For new items, let the addItem function handle ID and timestamps
         addItem(itemData);
       }
       onClose();
@@ -72,53 +61,72 @@ export const App = () => {
 
   return (
     <ChakraProvider>
-      <Box minH="100vh" bg="gray.50" py={8}>
-        <Container maxW="container.xl">
-          <Box display="flex" justifyContent="space-between" alignItems="center" mb={8}>
-            <Heading as="h1" size="xl" color="teal.600">
-              Camping Gear Inventory
-            </Heading>
-            <Button 
-              leftIcon={<AddIcon />} 
-              colorScheme="teal"
-              onClick={() => {
-                setEditingItem(null);
-                onOpen();
-              }}
+      <Box minH="100vh" bg="gray.50">
+        {/* Top bar */}
+        <Box bg="white" borderBottom="1px solid" borderColor="gray.200" py={3} px={{ base: 4, md: 6 }}>
+          <Container maxW="container.xl" px={0}>
+            <Flex align="center" gap={4}>
+              <Heading as="h1" size="md" color="teal.600" flexShrink={0} whiteSpace="nowrap">
+                Camping Gear
+              </Heading>
+              <Box flex="1">
+                <SearchAndFilter
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  sortConfig={sortConfig}
+                  onSortChange={(key, direction) => setSortConfig({ key, direction })}
+                />
+              </Box>
+              <Button
+                leftIcon={<AddIcon />}
+                colorScheme="teal"
+                flexShrink={0}
+                size="md"
+                onClick={() => { setEditingItem(null); onOpen(); }}
+              >
+                Add Item
+              </Button>
+            </Flex>
+          </Container>
+        </Box>
+
+        {/* Body */}
+        <Container maxW="container.xl" py={6} px={{ base: 4, md: 6 }}>
+          <Flex direction={{ base: 'column', md: 'row' }} gap={6} align="flex-start">
+            {/* Sidebar (desktop: sticky left column; mobile: horizontal chips above grid) */}
+            <Box
+              w={{ base: 'full', md: '180px' }}
+              flexShrink={0}
+              position={{ md: 'sticky' }}
+              top={{ md: '1rem' }}
             >
-              Add Item
-            </Button>
-          </Box>
-          
-          <SearchAndFilter 
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            selectedTags={selectedTags}
-            onTagsChange={handleTagsChange}
-            sortConfig={sortConfig}
-            onSortChange={handleSortConfigChange}
-            onResetFilters={handleResetFilters}
-            allTags={allTags}
-            mb={6} 
-          />
-          
-          <InventoryList 
-            items={filteredItems}
-            onEditItem={handleEditItem}
-            onDeleteItem={deleteItem}
-          />
-          
-          <ItemForm 
-            isOpen={isOpen} 
-            onClose={() => {
-              onClose();
-              setEditingItem(null);
-            }} 
-            item={editingItem}
-            onSubmit={handleSubmit}
-            allTags={allTags}
-          />
+              <TagSidebar
+                allItems={allItems}
+                activeTag={activeTag}
+                onTagSelect={handleTagSelect}
+              />
+            </Box>
+
+            {/* Main content grid */}
+            <Box flex="1" minW={0}>
+              <InventoryList
+                items={items}
+                tagGroups={tagGroups}
+                activeTag={activeTag}
+                onEditItem={handleEditItem}
+                onDeleteItem={deleteItem}
+              />
+            </Box>
+          </Flex>
         </Container>
+
+        <ItemForm
+          isOpen={isOpen}
+          onClose={() => { onClose(); setEditingItem(null); }}
+          item={editingItem}
+          onSubmit={handleSubmit}
+          allTags={getAllTags()}
+        />
       </Box>
     </ChakraProvider>
   );
