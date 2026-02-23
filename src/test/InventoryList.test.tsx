@@ -60,7 +60,7 @@ describe('InventoryList', () => {
       <InventoryList
         items={[]}
         tagGroups={emptyTagGroups}
-        activeTag={null}
+        activeTags={[]}
         onEditItem={mockOnEditItem}
         onDeleteItem={mockOnDeleteItem}
       />,
@@ -75,7 +75,7 @@ describe('InventoryList', () => {
       <InventoryList
         items={mockItems}
         tagGroups={buildTagGroups(mockItems)}
-        activeTag={null}
+        activeTags={[]}
         onEditItem={mockOnEditItem}
         onDeleteItem={mockOnDeleteItem}
       />,
@@ -87,12 +87,12 @@ describe('InventoryList', () => {
     expect(screen.getByText('camping')).toBeInTheDocument();
   });
 
-  it('should display items in single-tag view', () => {
+  it('should display items in filtered view', () => {
     render(
       <InventoryList
         items={mockItems}
         tagGroups={buildTagGroups(mockItems)}
-        activeTag="camping"
+        activeTags={['camping']}
         onEditItem={mockOnEditItem}
         onDeleteItem={mockOnDeleteItem}
       />,
@@ -107,7 +107,7 @@ describe('InventoryList', () => {
       <InventoryList
         items={mockItems}
         tagGroups={buildTagGroups(mockItems)}
-        activeTag={null}
+        activeTags={[]}
         onEditItem={mockOnEditItem}
         onDeleteItem={mockOnDeleteItem}
       />,

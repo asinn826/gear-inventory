@@ -130,8 +130,8 @@ export const useInventory = (): UseInventoryReturn => {
         (item.description?.toLowerCase() || '').includes(searchQuery.toLowerCase())
       )
       .filter(item => 
-        selectedTags.length === 0 || 
-        selectedTags.every(tag => item.tags.includes(tag))
+        selectedTags.length === 0 ||
+        selectedTags.some(tag => item.tags.includes(tag))
       )
       .sort((a, b) => {
         if (sortConfig.key === 'name' || sortConfig.key === 'description' || sortConfig.key === 'link') {

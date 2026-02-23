@@ -19,7 +19,7 @@ import { useInventory } from './hooks/useInventory';
 export const App = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [editingItem, setEditingItem] = useState<GearItem | null>(null);
-  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [activeTags, setActiveTags] = useState<string[]>([]);
 
   const {
     items,
@@ -36,9 +36,18 @@ export const App = () => {
     getAllTags,
   } = useInventory();
 
-  const handleTagSelect = useCallback((tag: string | null) => {
-    setActiveTag(tag);
-    setSelectedTags(tag ? [tag] : []);
+  const handleTagToggle = useCallback((tag: string | null) => {
+    if (tag === null) {
+      // "All" — clear everything
+      setActiveTags([]);
+      setSelectedTags([]);
+    } else {
+      setActiveTags(prev => {
+        const next = prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag];
+        setSelectedTags(next);
+        return next;
+      });
+    }
   }, [setSelectedTags]);
 
   const handleEditItem = (item: GearItem) => {
@@ -112,8 +121,8 @@ export const App = () => {
             >
               <TagSidebar
                 allItems={allItems}
-                activeTag={activeTag}
-                onTagSelect={handleTagSelect}
+                activeTags={activeTags}
+                onTagToggle={handleTagToggle}
               />
             </Box>
 
@@ -122,7 +131,7 @@ export const App = () => {
               <InventoryList
                 items={items}
                 tagGroups={tagGroups}
-                activeTag={activeTag}
+                activeTags={activeTags}
                 onEditItem={handleEditItem}
                 onDeleteItem={deleteItem}
               />

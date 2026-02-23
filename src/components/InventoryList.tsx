@@ -19,7 +19,7 @@ import { getTagColorScheme } from '../utils/tagColors';
 interface InventoryListProps {
   items: GearItem[];
   tagGroups: Map<string, GearItem[]>;
-  activeTag: string | null;
+  activeTags: string[];
   onEditItem: (item: GearItem) => void;
   onDeleteItem: (id: string) => Promise<void>;
 }
@@ -141,7 +141,7 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
 export const InventoryList = ({
   items,
   tagGroups,
-  activeTag,
+  activeTags,
   onEditItem,
   onDeleteItem,
 }: InventoryListProps) => {
@@ -158,8 +158,10 @@ export const InventoryList = ({
     }
   };
 
+  const isFiltered = activeTags.length > 0;
+
   // Empty states
-  if (activeTag === null && tagGroups.size === 0) {
+  if (!isFiltered && tagGroups.size === 0) {
     return (
       <Box textAlign="center" py={16}>
         <Text fontSize="lg" color="gray.500">
@@ -169,7 +171,7 @@ export const InventoryList = ({
     );
   }
 
-  if (activeTag !== null && items.length === 0) {
+  if (isFiltered && items.length === 0) {
     return (
       <Box textAlign="center" py={16}>
         <Text fontSize="lg" color="gray.500">No items match your search.</Text>
@@ -177,12 +179,16 @@ export const InventoryList = ({
     );
   }
 
-  // Single-tag view
-  if (activeTag !== null) {
+  // Filtered view (one or more tags selected)
+  if (isFiltered) {
     return (
       <Box>
-        <HStack mb={4} spacing={2} align="baseline">
-          <Heading size="md" color="gray.700">{activeTag}</Heading>
+        <HStack mb={4} spacing={2} align="center" flexWrap="wrap">
+          {activeTags.map(tag => (
+            <Tag key={tag} size="md" colorScheme={getTagColorScheme(tag)} variant="subtle" borderRadius="full">
+              <TagLabel>{tag}</TagLabel>
+            </Tag>
+          ))}
           <Text color="gray.400" fontSize="sm">({items.length})</Text>
         </HStack>
         <SimpleGrid columns={{ base: 2, lg: 3 }} spacing={{ base: 2, md: 4 }}>
