@@ -8,11 +8,11 @@ import {
   TagLabel,
   IconButton,
   Badge,
-  Heading,
+  Button,
   useToast,
   Tooltip,
 } from '@chakra-ui/react';
-import { DeleteIcon, EditIcon } from '@chakra-ui/icons';
+import { DeleteIcon, EditIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { GearItem } from '../types';
 import { getTagColorScheme } from '../utils/tagColors';
 
@@ -20,6 +20,7 @@ interface InventoryListProps {
   items: GearItem[];
   tagGroups: Map<string, GearItem[]>;
   activeTags: string[];
+  onClearTags: () => void;
   onEditItem: (item: GearItem) => void;
   onDeleteItem: (id: string) => Promise<void>;
 }
@@ -29,6 +30,18 @@ interface ItemCardProps {
   onEdit: () => void;
   onDelete: () => void;
 }
+
+const formatRelativeDate = (dateStr: string): string => {
+  const date = new Date(dateStr);
+  const now = new Date();
+  const diffDays = Math.floor((now.getTime() - date.getTime()) / 86400000);
+  if (diffDays === 0) return 'today';
+  if (diffDays === 1) return 'yesterday';
+  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffDays < 30) return `${Math.floor(diffDays / 7)}w ago`;
+  if (diffDays < 365) return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+  return date.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+};
 
 const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
   <Box
@@ -44,7 +57,7 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
     transition="all 0.2s"
   >
     {/* Name row */}
-    <HStack justify="space-between" align="flex-start" mb={{ base: 1, md: 2 }}>
+    <HStack justify="space-between" align="flex-start" mb={1}>
       <Text fontWeight="bold" fontSize={{ base: 'sm', md: 'md' }} flex="1" lineHeight="short" noOfLines={2}>
         {item.name}
       </Text>
@@ -61,6 +74,11 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
         </Badge>
       </HStack>
     </HStack>
+
+    {/* Updated date */}
+    <Text fontSize="xs" color="gray.400" mb={{ base: 1, md: 2 }}>
+      {formatRelativeDate(item.updatedAt)}
+    </Text>
 
     {/* Description — hidden on mobile (cards too narrow) */}
     {item.description && (
@@ -142,6 +160,7 @@ export const InventoryList = ({
   items,
   tagGroups,
   activeTags,
+  onClearTags,
   onEditItem,
   onDeleteItem,
 }: InventoryListProps) => {
@@ -190,6 +209,15 @@ export const InventoryList = ({
             </Tag>
           ))}
           <Text color="gray.400" fontSize="sm">({items.length})</Text>
+          <Button
+            size="xs"
+            variant="ghost"
+            colorScheme="gray"
+            leftIcon={<SmallCloseIcon />}
+            onClick={onClearTags}
+          >
+            Clear
+          </Button>
         </HStack>
         <SimpleGrid columns={{ base: 2, lg: 3 }} spacing={{ base: 2, md: 4 }}>
           {items.map(item => (

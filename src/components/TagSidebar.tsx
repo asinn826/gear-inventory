@@ -1,6 +1,6 @@
 import React from 'react';
-import { Box, VStack, HStack, Text, Wrap, WrapItem, Tag, TagLabel } from '@chakra-ui/react';
-import { CheckIcon } from '@chakra-ui/icons';
+import { Box, VStack, HStack, Text, Wrap, WrapItem, Tag, TagLabel, Button } from '@chakra-ui/react';
+import { CheckIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { GearItem } from '../types';
 import { getTagColorScheme } from '../utils/tagColors';
 
@@ -33,11 +33,12 @@ export const TagSidebar = ({ allItems, activeTags, onTagToggle }: TagSidebarProp
             <Tag
               cursor="pointer"
               onClick={() => onTagToggle(null)}
-              colorScheme={isAll ? 'teal' : 'gray'}
-              variant={isAll ? 'solid' : 'outline'}
+              colorScheme={isAll ? 'teal' : 'red'}
+              variant={isAll ? 'subtle' : 'solid'}
               size="md"
             >
-              <TagLabel>All</TagLabel>
+              {!isAll && <SmallCloseIcon mr={1} />}
+              <TagLabel>{isAll ? 'All' : 'Clear'}</TagLabel>
             </Tag>
           </WrapItem>
           {sortedTags.map(tag => {
@@ -62,6 +63,16 @@ export const TagSidebar = ({ allItems, activeTags, onTagToggle }: TagSidebarProp
       {/* Desktop: vertical list, multiple rows can be active */}
       <Box display={{ base: 'none', md: 'block' }}>
         <VStack align="stretch" spacing={0.5}>
+          <HStack justify="space-between" align="center" px={3} py={2}>
+            <Text fontSize="xs" fontWeight="semibold" color="gray.500" textTransform="uppercase" letterSpacing="wider">
+              Tags
+            </Text>
+            {!isAll && (
+              <Button size="xs" variant="ghost" colorScheme="gray" leftIcon={<SmallCloseIcon />} onClick={() => onTagToggle(null)}>
+                Clear
+              </Button>
+            )}
+          </HStack>
           <Box
             px={3}
             py={2}

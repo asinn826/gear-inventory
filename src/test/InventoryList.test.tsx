@@ -62,6 +62,7 @@ describe('InventoryList', () => {
         tagGroups={emptyTagGroups}
         activeTags={[]}
         onEditItem={mockOnEditItem}
+        onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
       />,
       { wrapper }
@@ -77,6 +78,7 @@ describe('InventoryList', () => {
         tagGroups={buildTagGroups(mockItems)}
         activeTags={[]}
         onEditItem={mockOnEditItem}
+        onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
       />,
       { wrapper }
@@ -94,6 +96,7 @@ describe('InventoryList', () => {
         tagGroups={buildTagGroups(mockItems)}
         activeTags={['camping']}
         onEditItem={mockOnEditItem}
+        onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
       />,
       { wrapper }
@@ -109,6 +112,7 @@ describe('InventoryList', () => {
         tagGroups={buildTagGroups(mockItems)}
         activeTags={[]}
         onEditItem={mockOnEditItem}
+        onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
       />,
       { wrapper }

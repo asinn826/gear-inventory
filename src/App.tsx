@@ -132,6 +132,7 @@ export const App = () => {
                 items={items}
                 tagGroups={tagGroups}
                 activeTags={activeTags}
+                onClearTags={() => handleTagToggle(null)}
                 onEditItem={handleEditItem}
                 onDeleteItem={deleteItem}
               />
