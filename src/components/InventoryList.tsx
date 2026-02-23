@@ -113,7 +113,9 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
           </Tag>
         ))}
         {item.tags.length > 2 && (
-          <Text fontSize="xs" color="gray.400">+{item.tags.length - 2}</Text>
+          <Tooltip label={item.tags.slice(2).join(', ')} placement="top" hasArrow>
+            <Text fontSize="xs" color="gray.400" cursor="default">+{item.tags.length - 2}</Text>
+          </Tooltip>
         )}
         {item.link && (
           <Tooltip label="Open link" placement="top" hasArrow>
