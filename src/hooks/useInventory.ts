@@ -186,10 +186,10 @@ export const useInventory = (): UseInventoryReturn => {
       groupMap.get(key)!.push(item);
     }
 
-    const sortedEntries = [...groupMap.entries()].sort(([a], [b]) => {
+    const sortedEntries = [...groupMap.entries()].sort(([a, aItems], [b, bItems]) => {
       if (a === 'Untagged') return 1;
       if (b === 'Untagged') return -1;
-      return a.localeCompare(b);
+      return bItems.length - aItems.length;
     });
 
     return new Map(sortedEntries);

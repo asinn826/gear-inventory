@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, VStack, HStack, Text, Tag, TagLabel } from '@chakra-ui/react';
+import { Box, VStack, HStack, Text, Select } from '@chakra-ui/react';
 import { GearItem } from '../types';
 import { getTagColorScheme } from '../utils/tagColors';
 
@@ -23,31 +23,22 @@ export const TagSidebar = ({ allItems, activeTag, onTagSelect }: TagSidebarProps
 
   return (
     <>
-      {/* Mobile: horizontal scrollable chip row */}
-      <Box display={{ base: 'block', md: 'none' }} overflowX="auto" pb={2}>
-        <HStack spacing={2} minW="max-content" px={1}>
-          <Tag
-            cursor="pointer"
-            onClick={() => onTagSelect(null)}
-            colorScheme={activeTag === null ? 'teal' : 'gray'}
-            variant={activeTag === null ? 'solid' : 'outline'}
-            size="md"
-          >
-            <TagLabel>All ({allItems.length})</TagLabel>
-          </Tag>
+      {/* Mobile: native select — triggers OS picker, no scroll friction */}
+      <Box display={{ base: 'block', md: 'none' }}>
+        <Select
+          value={activeTag ?? ''}
+          onChange={(e) => onTagSelect(e.target.value || null)}
+          bg="white"
+          size="sm"
+          borderRadius="md"
+        >
+          <option value="">All ({allItems.length})</option>
           {sortedTags.map(tag => (
-            <Tag
-              key={tag}
-              cursor="pointer"
-              onClick={() => onTagSelect(tag)}
-              colorScheme={activeTag === tag ? getTagColorScheme(tag) : 'gray'}
-              variant={activeTag === tag ? 'solid' : 'outline'}
-              size="md"
-            >
-              <TagLabel>{tag} ({tagCounts.get(tag)})</TagLabel>
-            </Tag>
+            <option key={tag} value={tag}>
+              {tag} ({tagCounts.get(tag)})
+            </option>
           ))}
-        </HStack>
+        </Select>
       </Box>
 
       {/* Desktop: vertical list */}
