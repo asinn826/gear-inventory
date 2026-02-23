@@ -36,6 +36,9 @@ yarn-error.log*
 *.sln
 *.sw?
 
+# Local scratch files
+temp/
+
 # OS generated files
 .DS_Store
 .DS_Store?
