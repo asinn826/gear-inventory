@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Text } from '@chakra-ui/react';
 import { keyframes } from '@emotion/react';
 
@@ -19,7 +19,13 @@ const shadowJig = keyframes`
 `;
 
 
-export const TotoroLoader = () => (
+export const TotoroLoader = () => {
+  const [showHint, setShowHint] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShowHint(true), 4000);
+    return () => clearTimeout(t);
+  }, []);
+  return (
   <Box
     display="flex"
     flexDirection="column"
@@ -52,5 +58,11 @@ export const TotoroLoader = () => (
     <Text mt={5} color="gray.600" fontSize="sm">
       Loading your gear…
     </Text>
+    {showHint && (
+      <Text mt={3} color="gray.400" fontSize="xs" textAlign="center" maxW="260px">
+        Taking a while? The backend database might be spinning up — give it a minute or two.
+      </Text>
+    )}
   </Box>
-);
+  );
+};
