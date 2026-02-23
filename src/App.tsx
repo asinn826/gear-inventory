@@ -65,11 +65,12 @@ export const App = () => {
         {/* Top bar */}
         <Box bg="white" borderBottom="1px solid" borderColor="gray.200" py={3} px={{ base: 4, md: 6 }}>
           <Container maxW="container.xl" px={0}>
-            <Flex align="center" gap={4}>
+            {/* Row 1: title + add button (always) + search+sort on desktop */}
+            <Flex align="center" gap={3}>
               <Heading as="h1" size="md" color="teal.600" flexShrink={0} whiteSpace="nowrap">
                 Camping Gear
               </Heading>
-              <Box flex="1">
+              <Box flex="1" display={{ base: 'none', md: 'block' }}>
                 <SearchAndFilter
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
@@ -81,17 +82,26 @@ export const App = () => {
                 leftIcon={<AddIcon />}
                 colorScheme="teal"
                 flexShrink={0}
-                size="md"
+                size="sm"
                 onClick={() => { setEditingItem(null); onOpen(); }}
               >
                 Add Item
               </Button>
             </Flex>
+            {/* Row 2: search + sort on mobile only */}
+            <Box display={{ base: 'block', md: 'none' }} mt={2}>
+              <SearchAndFilter
+                searchQuery={searchQuery}
+                onSearchChange={setSearchQuery}
+                sortConfig={sortConfig}
+                onSortChange={(key, direction) => setSortConfig({ key, direction })}
+              />
+            </Box>
           </Container>
         </Box>
 
         {/* Body */}
-        <Container maxW="container.xl" py={6} px={{ base: 4, md: 6 }}>
+        <Container maxW="container.xl" py={{ base: 4, md: 6 }} px={{ base: 3, md: 6 }}>
           <Flex direction={{ base: 'column', md: 'row' }} gap={6} align="flex-start">
             {/* Sidebar (desktop: sticky left column; mobile: horizontal chips above grid) */}
             <Box

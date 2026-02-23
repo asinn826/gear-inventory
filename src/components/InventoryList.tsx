@@ -37,20 +37,20 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
     borderRadius="lg"
     border="1px solid"
     borderColor="gray.200"
-    p={4}
+    p={{ base: 3, md: 4 }}
     display="flex"
     flexDirection="column"
     _hover={{ boxShadow: 'md', borderColor: 'gray.300' }}
     transition="all 0.2s"
   >
     {/* Name row */}
-    <HStack justify="space-between" align="flex-start" mb={2}>
-      <Text fontWeight="bold" fontSize="md" flex="1" lineHeight="short">
+    <HStack justify="space-between" align="flex-start" mb={{ base: 1, md: 2 }}>
+      <Text fontWeight="bold" fontSize={{ base: 'sm', md: 'md' }} flex="1" lineHeight="short" noOfLines={2}>
         {item.name}
       </Text>
-      <HStack spacing={1} flexShrink={0} ml={2}>
+      <HStack spacing={1} flexShrink={0} ml={1}>
         {item.isConsumable && (
-          <Text fontSize="sm" title="Consumable">🔥</Text>
+          <Text fontSize="xs" title="Consumable">🔥</Text>
         )}
         <Badge
           colorScheme={item.isConsumable && item.quantity < 3 ? 'red' : 'teal'}
@@ -62,17 +62,24 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
       </HStack>
     </HStack>
 
-    {/* Description */}
+    {/* Description — hidden on mobile (cards too narrow) */}
     {item.description && (
-      <Text color="gray.600" fontSize="sm" noOfLines={2} mb={3} flex="1">
+      <Text
+        display={{ base: 'none', md: 'block' }}
+        color="gray.600"
+        fontSize="sm"
+        noOfLines={2}
+        mb={3}
+        flex="1"
+      >
         {item.description}
       </Text>
     )}
 
     {/* Footer: tags + link (left) / edit+delete (right) */}
-    <HStack justify="space-between" align="flex-end" mt="auto" pt={2}>
-      <HStack spacing={1} flexWrap="wrap" flex="1" minW={0}>
-        {item.tags.map(tag => (
+    <HStack justify="space-between" align="flex-end" mt="auto" pt={{ base: 1, md: 2 }}>
+      <HStack spacing={1} flexWrap="wrap" flex="1" minW={0} overflow="hidden">
+        {item.tags.slice(0, 2).map(tag => (
           <Tag
             key={tag}
             size="sm"
@@ -83,6 +90,9 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
             <TagLabel>{tag}</TagLabel>
           </Tag>
         ))}
+        {item.tags.length > 2 && (
+          <Text fontSize="xs" color="gray.400">+{item.tags.length - 2}</Text>
+        )}
         {item.link && (
           <Tooltip label="Open link" placement="top" hasArrow>
             <Box
@@ -106,7 +116,7 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
           </Tooltip>
         )}
       </HStack>
-      <HStack spacing={1} ml={2} flexShrink={0}>
+      <HStack spacing={0} ml={1} flexShrink={0}>
         <IconButton
           aria-label="Edit item"
           icon={<EditIcon />}
@@ -175,7 +185,7 @@ export const InventoryList = ({
           <Heading size="md" color="gray.700">{activeTag}</Heading>
           <Text color="gray.400" fontSize="sm">({items.length})</Text>
         </HStack>
-        <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={4}>
+        <SimpleGrid columns={{ base: 2, lg: 3 }} spacing={{ base: 2, md: 4 }}>
           {items.map(item => (
             <ItemCard
               key={item.id}
@@ -193,19 +203,21 @@ export const InventoryList = ({
   return (
     <Box>
       {[...tagGroups.entries()].map(([tag, tagItems]) => (
-        <Box key={tag} mb={10}>
-          <HStack mb={3} spacing={2} align="baseline">
-            <Heading
-              size="xs"
-              color="gray.500"
+        <Box key={tag} mb={{ base: 6, md: 10 }}>
+          <HStack mb={{ base: 2, md: 3 }} spacing={2} align="center">
+            <Text
+              fontSize="xs"
+              fontWeight="semibold"
+              color="gray.400"
               textTransform="uppercase"
               letterSpacing="wider"
             >
               {tag}
-            </Heading>
-            <Text color="gray.400" fontSize="xs">({tagItems.length})</Text>
+            </Text>
+            <Text color="gray.300" fontSize="xs">·</Text>
+            <Text color="gray.400" fontSize="xs">{tagItems.length}</Text>
           </HStack>
-          <SimpleGrid columns={{ base: 1, sm: 2, lg: 3 }} spacing={4}>
+          <SimpleGrid columns={{ base: 2, lg: 3 }} spacing={{ base: 2, md: 4 }}>
             {tagItems.map(item => (
               <ItemCard
                 key={item.id}
