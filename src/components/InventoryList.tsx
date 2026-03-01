@@ -98,6 +98,7 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
         noOfLines={2}
         mb={3}
         flex="1"
+        whiteSpace="pre-line"
       >
         {item.description}
       </Text>
