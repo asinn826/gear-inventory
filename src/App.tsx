@@ -12,6 +12,7 @@ import { AddIcon } from '@chakra-ui/icons';
 import { GearItem } from './types';
 import { InventoryList } from './components/InventoryList';
 import { ItemForm } from './components/ItemForm';
+import { ViewModal } from './components/ViewModal';
 import { SearchAndFilter } from './components/SearchAndFilter';
 import { TagSidebar } from './components/TagSidebar';
 import { TotoroLoader } from './components/TotoroLoader';
@@ -19,7 +20,9 @@ import { useInventory } from './hooks/useInventory';
 
 export const App = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isViewOpen, onOpen: onViewOpen, onClose: onViewClose } = useDisclosure();
   const [editingItem, setEditingItem] = useState<GearItem | null>(null);
+  const [viewingItem, setViewingItem] = useState<GearItem | null>(null);
   const [activeTags, setActiveTags] = useState<string[]>([]);
 
   const {
@@ -52,9 +55,21 @@ export const App = () => {
     }
   }, [setSelectedTags]);
 
+  const handleViewItem = (item: GearItem) => {
+    setViewingItem(item);
+    onViewOpen();
+  };
+
   const handleEditItem = (item: GearItem) => {
     setEditingItem(item);
     onOpen();
+  };
+
+  const handleViewToEdit = () => {
+    if (viewingItem) {
+      onViewClose();
+      handleEditItem(viewingItem);
+    }
   };
 
   const handleSubmit = (itemData: Omit<GearItem, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -138,11 +153,18 @@ export const App = () => {
                 onClearTags={() => handleTagToggle(null)}
                 onEditItem={handleEditItem}
                 onDeleteItem={deleteItem}
+                onViewItem={handleViewItem}
               />
             </Box>
           </Flex>
         </Container>
 
+        <ViewModal
+          isOpen={isViewOpen}
+          onClose={() => { onViewClose(); setViewingItem(null); }}
+          item={viewingItem}
+          onEdit={handleViewToEdit}
+        />
         <ItemForm
           isOpen={isOpen}
           onClose={() => { onClose(); setEditingItem(null); }}

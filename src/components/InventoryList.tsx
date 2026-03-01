@@ -28,12 +28,14 @@ interface InventoryListProps {
   onClearTags: () => void;
   onEditItem: (item: GearItem) => void;
   onDeleteItem: (id: string) => Promise<void>;
+  onViewItem: (item: GearItem) => void;
 }
 
 interface ItemCardProps {
   item: GearItem;
   onEdit: () => void;
   onDelete: () => void;
+  onView: () => void;
 }
 
 const formatRelativeDate = (dateStr: string): string => {
@@ -52,7 +54,7 @@ const formatRelativeDate = (dateStr: string): string => {
   return `${dateStr2}, ${time}`;
 };
 
-const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
+const ItemCard = ({ item, onEdit, onDelete, onView }: ItemCardProps) => (
   <Box
     role="group"
     bg="white"
@@ -64,6 +66,8 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
     flexDirection="column"
     _hover={{ boxShadow: 'md', borderColor: 'gray.300' }}
     transition="all 0.2s"
+    cursor="pointer"
+    onClick={onView}
   >
     {/* Name row */}
     <HStack justify="space-between" align="flex-start" mb={1}>
@@ -153,7 +157,7 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
           size="xs"
           colorScheme="teal"
           variant="ghost"
-          onClick={onEdit}
+          onClick={(e: React.MouseEvent) => { e.stopPropagation(); onEdit(); }}
         />
         <IconButton
           aria-label="Delete item"
@@ -161,7 +165,7 @@ const ItemCard = ({ item, onEdit, onDelete }: ItemCardProps) => (
           size="xs"
           colorScheme="red"
           variant="ghost"
-          onClick={onDelete}
+          onClick={(e: React.MouseEvent) => { e.stopPropagation(); onDelete(); }}
         />
       </HStack>
     </HStack>
@@ -175,6 +179,7 @@ export const InventoryList = ({
   onClearTags,
   onEditItem,
   onDeleteItem,
+  onViewItem,
 }: InventoryListProps) => {
   const toast = useToast();
 
@@ -236,6 +241,7 @@ export const InventoryList = ({
             <ItemCard
               key={item.id}
               item={item}
+              onView={() => onViewItem(item)}
               onEdit={() => onEditItem(item)}
               onDelete={() => handleDelete(item.id, item.name)}
             />
@@ -281,6 +287,7 @@ export const InventoryList = ({
                 <ItemCard
                   key={item.id}
                   item={item}
+                  onView={() => onViewItem(item)}
                   onEdit={() => onEditItem(item)}
                   onDelete={() => handleDelete(item.id, item.name)}
                 />

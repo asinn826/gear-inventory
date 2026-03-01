@@ -50,6 +50,7 @@ const buildTagGroups = (items: GearItem[]): Map<string, GearItem[]> => {
 describe('InventoryList', () => {
   const mockOnEditItem = vi.fn();
   const mockOnDeleteItem = vi.fn().mockResolvedValue(undefined);
+  const mockOnViewItem = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -64,6 +65,7 @@ describe('InventoryList', () => {
         onEditItem={mockOnEditItem}
         onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
+        onViewItem={mockOnViewItem}
       />,
       { wrapper }
     );
@@ -80,6 +82,7 @@ describe('InventoryList', () => {
         onEditItem={mockOnEditItem}
         onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
+        onViewItem={mockOnViewItem}
       />,
       { wrapper }
     );
@@ -98,6 +101,7 @@ describe('InventoryList', () => {
         onEditItem={mockOnEditItem}
         onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
+        onViewItem={mockOnViewItem}
       />,
       { wrapper }
     );
@@ -114,6 +118,7 @@ describe('InventoryList', () => {
         onEditItem={mockOnEditItem}
         onClearTags={vi.fn()}
         onDeleteItem={mockOnDeleteItem}
+        onViewItem={mockOnViewItem}
       />,
       { wrapper }
     );
