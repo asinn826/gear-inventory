@@ -97,19 +97,21 @@ export const ViewModal = ({ item, isOpen, onClose, onEdit }: ViewModalProps) => 
                 <Text fontSize="xs" fontWeight="semibold" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={1}>
                   Link
                 </Text>
-                <Button
-                  as="a"
-                  href={item.link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  size="sm"
-                  variant="link"
-                  colorScheme="teal"
-                  rightIcon={<ExternalLinkIcon />}
-                  fontWeight="normal"
-                >
-                  {item.link}
-                </Button>
+                <HStack spacing={1} overflow="hidden">
+                  <Text
+                    as="a"
+                    href={item.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    fontSize="sm"
+                    color="teal.500"
+                    _hover={{ color: 'teal.600', textDecoration: 'underline' }}
+                    isTruncated
+                  >
+                    {item.link}
+                  </Text>
+                  <ExternalLinkIcon color="teal.500" boxSize={3} flexShrink={0} />
+                </HStack>
               </Box>
             )}
 
