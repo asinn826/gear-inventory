@@ -47,7 +47,23 @@ export const ViewModal = ({ item, isOpen, onClose, onEdit }: ViewModalProps) => 
       <ModalOverlay />
       <ModalContent>
         <ModalHeader pr={10}>
-          <Text>{item.name}</Text>
+          <HStack spacing={2} align="center">
+            <Text>{item.name}</Text>
+            {item.link && (
+              <Box
+                as="a"
+                href={item.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                color="teal.500"
+                _hover={{ color: 'teal.600' }}
+                display="inline-flex"
+                alignItems="center"
+              >
+                <ExternalLinkIcon boxSize={4} />
+              </Box>
+            )}
+          </HStack>
           <HStack mt={2} spacing={2}>
             {item.isConsumable && (
               <Badge colorScheme="orange" variant="subtle">
@@ -88,29 +104,6 @@ export const ViewModal = ({ item, isOpen, onClose, onEdit }: ViewModalProps) => 
                       <TagLabel>{tag}</TagLabel>
                     </Tag>
                   ))}
-                </HStack>
-              </Box>
-            )}
-
-            {item.link && (
-              <Box>
-                <Text fontSize="xs" fontWeight="semibold" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={1}>
-                  Link
-                </Text>
-                <HStack spacing={1} overflow="hidden">
-                  <Text
-                    as="a"
-                    href={item.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    fontSize="sm"
-                    color="teal.500"
-                    _hover={{ color: 'teal.600', textDecoration: 'underline' }}
-                    isTruncated
-                  >
-                    {item.link}
-                  </Text>
-                  <ExternalLinkIcon color="teal.500" boxSize={3} flexShrink={0} />
                 </HStack>
               </Box>
             )}
