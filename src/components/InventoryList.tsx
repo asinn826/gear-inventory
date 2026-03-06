@@ -56,7 +56,11 @@ const formatRelativeDate = (dateStr: string): string => {
 
 const ItemCard = ({ item, onEdit, onDelete, onView }: ItemCardProps) => (
   <Box
+    as="button"
+    type="button"
     role="group"
+    textAlign="left"
+    w="full"
     bg="white"
     borderRadius="lg"
     border="1px solid"
