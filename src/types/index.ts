@@ -23,3 +23,16 @@ export interface AppState {
 export type SortConfig = AppState['sortConfig'];
 
 export type GearItemInput = Omit<GearItem, 'id' | 'createdAt' | 'updatedAt'>;
+
+export interface AuditLogEntry {
+  id: string;
+  itemId: string;
+  itemName: string;
+  action: 'created' | 'updated' | 'deleted';
+  changes: Record<string, { before: unknown; after: unknown }> | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  city: string | null;
+  country: string | null;
+  timestamp: string;
+}

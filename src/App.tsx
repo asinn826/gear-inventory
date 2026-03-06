@@ -8,7 +8,7 @@ import {
   Flex,
   useDisclosure,
 } from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { AddIcon, TimeIcon } from '@chakra-ui/icons';
 import { GearItem } from './types';
 import { InventoryList } from './components/InventoryList';
 import { ItemForm } from './components/ItemForm';
@@ -16,6 +16,7 @@ import { ViewModal } from './components/ViewModal';
 import { SearchAndFilter } from './components/SearchAndFilter';
 import { TagSidebar } from './components/TagSidebar';
 import { TotoroLoader } from './components/TotoroLoader';
+import { AuditLogView } from './components/AuditLogView';
 import { useInventory } from './hooks/useInventory';
 
 export const App = () => {
@@ -24,6 +25,7 @@ export const App = () => {
   const [editingItem, setEditingItem] = useState<GearItem | null>(null);
   const [viewingItem, setViewingItem] = useState<GearItem | null>(null);
   const [activeTags, setActiveTags] = useState<string[]>([]);
+  const [view, setView] = useState<'inventory' | 'audit'>('inventory');
 
   const {
     items,
@@ -105,14 +107,27 @@ export const App = () => {
                 />
               </Box>
               <Button
-                leftIcon={<AddIcon />}
+                leftIcon={<TimeIcon />}
+                variant="ghost"
                 colorScheme="teal"
                 flexShrink={0}
                 size="sm"
-                onClick={() => { setEditingItem(null); onOpen(); }}
+                onClick={() => setView(v => v === 'audit' ? 'inventory' : 'audit')}
+                isActive={view === 'audit'}
               >
-                Add Item
+                Activity
               </Button>
+              {view === 'inventory' && (
+                <Button
+                  leftIcon={<AddIcon />}
+                  colorScheme="teal"
+                  flexShrink={0}
+                  size="sm"
+                  onClick={() => { setEditingItem(null); onOpen(); }}
+                >
+                  Add Item
+                </Button>
+              )}
             </Flex>
             {/* Row 2: search + sort on mobile only */}
             <Box display={{ base: 'block', md: 'none' }} mt={2}>
@@ -128,35 +143,41 @@ export const App = () => {
 
         {/* Body */}
         <Container maxW="container.xl" py={{ base: 4, md: 6 }} px={{ base: 3, md: 6 }}>
-          {isLoading ? <TotoroLoader /> : null}
-          <Flex direction={{ base: 'column', md: 'row' }} gap={6} align="flex-start" display={isLoading ? 'none' : 'flex'}>
-            {/* Sidebar (desktop: sticky left column; mobile: horizontal chips above grid) */}
-            <Box
-              w={{ base: 'full', md: '180px' }}
-              flexShrink={0}
-              position={{ md: 'sticky' }}
-              top={{ md: '1rem' }}
-            >
-              <TagSidebar
-                allItems={allItems}
-                activeTags={activeTags}
-                onTagToggle={handleTagToggle}
-              />
-            </Box>
+          {view === 'audit' ? (
+            <AuditLogView />
+          ) : (
+            <>
+              {isLoading ? <TotoroLoader /> : null}
+              <Flex direction={{ base: 'column', md: 'row' }} gap={6} align="flex-start" display={isLoading ? 'none' : 'flex'}>
+                {/* Sidebar (desktop: sticky left column; mobile: horizontal chips above grid) */}
+                <Box
+                  w={{ base: 'full', md: '180px' }}
+                  flexShrink={0}
+                  position={{ md: 'sticky' }}
+                  top={{ md: '1rem' }}
+                >
+                  <TagSidebar
+                    allItems={allItems}
+                    activeTags={activeTags}
+                    onTagToggle={handleTagToggle}
+                  />
+                </Box>
 
-            {/* Main content grid */}
-            <Box flex="1" minW={0}>
-              <InventoryList
-                items={items}
-                tagGroups={tagGroups}
-                activeTags={activeTags}
-                onClearTags={() => handleTagToggle(null)}
-                onEditItem={handleEditItem}
-                onDeleteItem={deleteItem}
-                onViewItem={handleViewItem}
-              />
-            </Box>
-          </Flex>
+                {/* Main content grid */}
+                <Box flex="1" minW={0}>
+                  <InventoryList
+                    items={items}
+                    tagGroups={tagGroups}
+                    activeTags={activeTags}
+                    onClearTags={() => handleTagToggle(null)}
+                    onEditItem={handleEditItem}
+                    onDeleteItem={deleteItem}
+                    onViewItem={handleViewItem}
+                  />
+                </Box>
+              </Flex>
+            </>
+          )}
         </Container>
 
         <ViewModal

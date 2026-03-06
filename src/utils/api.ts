@@ -64,8 +64,29 @@ export const deleteItem = async (id: string): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/items/${id}`, {
     method: 'DELETE',
   });
-  
+
   if (!response.ok) {
     throw new Error('Failed to delete item');
   }
+};
+
+export interface AuditLogEntry {
+  id: string;
+  itemId: string;
+  itemName: string;
+  action: 'created' | 'updated' | 'deleted';
+  changes: Record<string, { before: unknown; after: unknown }> | null;
+  ipAddress: string | null;
+  userAgent: string | null;
+  city: string | null;
+  country: string | null;
+  timestamp: string;
+}
+
+export const fetchAuditLog = async (limit = 100, offset = 0): Promise<AuditLogEntry[]> => {
+  const response = await fetch(`${API_BASE_URL}/audit-log?limit=${limit}&offset=${offset}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch audit log');
+  }
+  return response.json();
 };
