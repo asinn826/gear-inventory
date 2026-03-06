@@ -6,9 +6,12 @@ import {
   Heading,
   Button,
   Flex,
+  Tabs,
+  TabList,
+  Tab,
   useDisclosure,
 } from '@chakra-ui/react';
-import { AddIcon, TimeIcon } from '@chakra-ui/icons';
+import { AddIcon } from '@chakra-ui/icons';
 import { GearItem } from './types';
 import { InventoryList } from './components/InventoryList';
 import { ItemForm } from './components/ItemForm';
@@ -93,12 +96,35 @@ export const App = () => {
         {/* Top bar */}
         <Box bg="white" borderBottom="1px solid" borderColor="gray.200" py={3} px={{ base: 4, md: 6 }}>
           <Container maxW="container.xl" px={0}>
-            {/* Row 1: title + add button (always) + search+sort on desktop */}
+            {/* Row 1: title + search+sort on desktop + add button */}
             <Flex align="center" gap={3}>
               <Heading as="h1" size="md" color="teal.600" flexShrink={0} whiteSpace="nowrap">
                 Gear Inventory
               </Heading>
-              <Box flex="1" display={{ base: 'none', md: 'block' }}>
+              {view === 'inventory' && (
+                <Box flex="1" display={{ base: 'none', md: 'block' }}>
+                  <SearchAndFilter
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                    sortConfig={sortConfig}
+                    onSortChange={(key, direction) => setSortConfig({ key, direction })}
+                  />
+                </Box>
+              )}
+              {view === 'audit' && <Box flex="1" />}
+              <Button
+                leftIcon={<AddIcon />}
+                colorScheme="teal"
+                flexShrink={0}
+                size="sm"
+                onClick={() => { setEditingItem(null); onOpen(); }}
+              >
+                Add Item
+              </Button>
+            </Flex>
+            {/* Row 2: search + sort on mobile, inventory only */}
+            {view === 'inventory' && (
+              <Box display={{ base: 'block', md: 'none' }} mt={2}>
                 <SearchAndFilter
                   searchQuery={searchQuery}
                   onSearchChange={setSearchQuery}
@@ -106,38 +132,21 @@ export const App = () => {
                   onSortChange={(key, direction) => setSortConfig({ key, direction })}
                 />
               </Box>
-              <Button
-                leftIcon={<TimeIcon />}
-                variant="ghost"
-                colorScheme="teal"
-                flexShrink={0}
-                size="sm"
-                onClick={() => setView(v => v === 'audit' ? 'inventory' : 'audit')}
-                isActive={view === 'audit'}
-              >
-                Activity
-              </Button>
-              {view === 'inventory' && (
-                <Button
-                  leftIcon={<AddIcon />}
-                  colorScheme="teal"
-                  flexShrink={0}
-                  size="sm"
-                  onClick={() => { setEditingItem(null); onOpen(); }}
-                >
-                  Add Item
-                </Button>
-              )}
-            </Flex>
-            {/* Row 2: search + sort on mobile only */}
-            <Box display={{ base: 'block', md: 'none' }} mt={2}>
-              <SearchAndFilter
-                searchQuery={searchQuery}
-                onSearchChange={setSearchQuery}
-                sortConfig={sortConfig}
-                onSortChange={(key, direction) => setSortConfig({ key, direction })}
-              />
-            </Box>
+            )}
+            {/* Row 3: tabs */}
+            <Tabs
+              index={view === 'inventory' ? 0 : 1}
+              onChange={i => setView(i === 0 ? 'inventory' : 'audit')}
+              colorScheme="teal"
+              size="sm"
+              mt={3}
+              mx={-1}
+            >
+              <TabList borderBottom="none">
+                <Tab fontWeight="medium">Inventory</Tab>
+                <Tab fontWeight="medium">Activity</Tab>
+              </TabList>
+            </Tabs>
           </Container>
         </Box>
 
