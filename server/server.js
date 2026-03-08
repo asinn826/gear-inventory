@@ -292,10 +292,12 @@ app.post('/api/items/refresh-images', async (req, res) => {
         ...(force ? {} : { imageUrl: null }),
       },
     });
-    res.json({ queued: items.length });
-    for (const item of items) {
-      await enrichItemImage(item);
-    }
+    res.set('Connection', 'close').json({ queued: items.length });
+    setImmediate(async () => {
+      for (const item of items) {
+        await enrichItemImage(item);
+      }
+    });
   } catch (error) {
     console.error('Error refreshing images:', error);
   }
