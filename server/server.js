@@ -1,7 +1,7 @@
 // CommonJS version for better compatibility with Render
 const express = require('express');
 const cors = require('cors');
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require('../src/generated/prisma');
 const { withAccelerate } = require('@prisma/extension-accelerate');
 
 const app = express();
