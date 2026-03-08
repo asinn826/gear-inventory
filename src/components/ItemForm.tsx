@@ -46,8 +46,13 @@ const validationSchema = Yup.object().shape({
   link: Yup.string()
     .nullable()
     .url('Must be a valid URL')
-    .transform((value) => (value === '' ? null : value)) // Convert empty string to null
-    .default(null), // Default to null when empty
+    .transform((value) => (value === '' ? null : value))
+    .default(null),
+  imageUrl: Yup.string()
+    .nullable()
+    .url('Must be a valid URL')
+    .transform((value) => (value === '' ? null : value))
+    .default(null),
   tags: Yup.array().of(Yup.string()),
 });
 
@@ -76,7 +81,8 @@ export const ItemForm = ({ isOpen, onClose, item, onSubmit, allTags: availableTa
     description: item?.description || '',
     quantity: item?.quantity || 1,
     isConsumable: item?.isConsumable || false,
-    link: item?.link || '', // Ensure link is always a string, default to empty
+    link: item?.link || '',
+    imageUrl: item?.imageUrl || '',
     tags: item?.tags || [],
   };
   
@@ -295,6 +301,21 @@ export const ItemForm = ({ isOpen, onClose, item, onSubmit, allTags: availableTa
                         />
                         <FormHelperText>Link to the product page (optional)</FormHelperText>
                         <FormErrorMessage>{form.errors.link as string}</FormErrorMessage>
+                      </FormControl>
+                    )}
+                  </Field>
+
+                  <Field name="imageUrl">
+                    {({ field, form }: FieldProps) => (
+                      <FormControl isInvalid={!!(form.errors.imageUrl && form.touched.imageUrl)}>
+                        <FormLabel>Image URL</FormLabel>
+                        <Input
+                          {...field}
+                          placeholder="https://example.com/image.jpg"
+                          type="url"
+                        />
+                        <FormHelperText>Direct link to a product image (optional)</FormHelperText>
+                        <FormErrorMessage>{form.errors.imageUrl as string}</FormErrorMessage>
                       </FormControl>
                     )}
                   </Field>

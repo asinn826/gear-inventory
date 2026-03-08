@@ -157,7 +157,7 @@ app.get('/api/tags', async (req, res) => {
 // Create a new item
 app.post('/api/items', async (req, res) => {
   try {
-    const { name, description, quantity, isConsumable, link, tags = [] } = req.body;
+    const { name, description, quantity, isConsumable, link, imageUrl, tags = [] } = req.body;
 
     const tagConnections = tags.map((tagName) => ({
       where: { name: tagName },
@@ -171,6 +171,7 @@ app.post('/api/items', async (req, res) => {
         quantity: parseInt(quantity, 10) || 1,
         isConsumable: Boolean(isConsumable),
         link: link || null,
+        imageUrl: imageUrl || null,
         tags: {
           connectOrCreate: tagConnections,
         },
@@ -207,7 +208,7 @@ app.post('/api/items', async (req, res) => {
 app.put('/api/items/:id', async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, description, quantity, isConsumable, link, tags = [] } = req.body;
+    const { name, description, quantity, isConsumable, link, imageUrl, tags = [] } = req.body;
 
     const currentItem = await prisma.item.findUnique({
       where: { id },
@@ -240,6 +241,7 @@ app.put('/api/items/:id', async (req, res) => {
         quantity: parseInt(quantity, 10) || 1,
         isConsumable: Boolean(isConsumable),
         link: link || null,
+        imageUrl: imageUrl !== undefined ? (imageUrl || null) : undefined,
         tags: {
           disconnect: tagsToDisconnect,
           connectOrCreate: tagsToConnect,
@@ -265,8 +267,8 @@ app.put('/api/items/:id', async (req, res) => {
 
     res.json(formattedItem);
 
-    // Fire-and-forget: enrich image if link changed
-    if (updatedItem.link && updatedItem.link !== currentItem.link) {
+    // Fire-and-forget: enrich image if link changed and no manual imageUrl provided
+    if (updatedItem.link && updatedItem.link !== currentItem.link && !imageUrl) {
       enrichItemImage(updatedItem);
     }
 
