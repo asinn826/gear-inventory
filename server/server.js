@@ -75,13 +75,18 @@ async function fetchOGImage(url) {
       },
     });
     clearTimeout(timeout);
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.log(`fetchOGImage ${url} -> ${res.status}`);
+      return null;
+    }
     const html = await res.text();
     const match =
       html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
       html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+    console.log(`fetchOGImage ${url} -> ${res.status} -> ${match ? match[1] : 'no og:image'}`);
     return match ? match[1] : null;
-  } catch {
+  } catch (err) {
+    console.log(`fetchOGImage ${url} -> error: ${err.message}`);
     return null;
   }
 }
