@@ -25,6 +25,7 @@ function relativeTime(ts: string): string {
 
 function parseBrowser(ua: string | null): string {
   if (!ua) return 'Unknown browser';
+  if (ua === 'system/og-image-enrichment') return 'Auto image fetch';
   let browser = 'Unknown browser';
   let os = 'Unknown OS';
 
@@ -57,14 +58,19 @@ function ChangesSummary({ entry }: { entry: AuditLogEntry }) {
   if (fields.length === 0) return null;
   return (
     <VStack align="flex-start" spacing={0} mt={1}>
-      {fields.map(([field, { before, after }]) => (
-        <Text key={field} fontSize="xs" color="gray.600">
-          <Text as="span" fontWeight="medium">{field}:</Text>{' '}
-          <Text as="span" color="red.500">{String(before ?? '—')}</Text>
-          {' → '}
-          <Text as="span" color="green.600">{String(after ?? '—')}</Text>
-        </Text>
-      ))}
+      {fields.map(([field, { before, after }]) => {
+        const label = field === 'imageUrl' ? 'image' : field;
+        const isUrl = (v: unknown) => typeof v === 'string' && v.startsWith('http');
+        const fmt = (v: unknown) => isUrl(v) ? '(set)' : String(v ?? '—');
+        return (
+          <Text key={field} fontSize="xs" color="gray.600">
+            <Text as="span" fontWeight="medium">{label}:</Text>{' '}
+            <Text as="span" color="red.500">{before == null ? '—' : fmt(before)}</Text>
+            {' → '}
+            <Text as="span" color="green.600">{after == null ? '—' : fmt(after)}</Text>
+          </Text>
+        );
+      })}
     </VStack>
   );
 }
