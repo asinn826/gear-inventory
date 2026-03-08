@@ -107,6 +107,14 @@ async function enrichItemImage(item) {
     const imageUrl = await fetchOGImage(item.link);
     if (imageUrl) {
       await prisma.item.update({ where: { id: item.id }, data: { imageUrl } });
+      writeAuditLog({
+        itemId: item.id,
+        itemName: item.name,
+        action: 'updated',
+        changes: { imageUrl: { before: item.imageUrl ?? null, after: imageUrl } },
+        ipAddress: '',
+        userAgent: 'system/og-image-enrichment',
+      });
     }
   } catch (err) {
     console.error('enrichItemImage error:', err);
@@ -274,7 +282,7 @@ app.put('/api/items/:id', async (req, res) => {
 
     // Compute diff for audit log
     const changes = {};
-    for (const field of ['name', 'description', 'quantity', 'isConsumable', 'link']) {
+    for (const field of ['name', 'description', 'quantity', 'isConsumable', 'link', 'imageUrl']) {
       if (currentItem[field] !== updatedItem[field]) {
         changes[field] = { before: currentItem[field], after: updatedItem[field] };
       }
