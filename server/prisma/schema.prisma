@@ -15,6 +15,7 @@ model Item {
   quantity    Int      @default(1)
   isConsumable Boolean  @default(false)
   link        String?
+  imageUrl    String?
   tags        Tag[]    @relation("ItemTags")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
