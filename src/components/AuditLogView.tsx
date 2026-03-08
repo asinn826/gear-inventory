@@ -7,6 +7,7 @@ import {
   Flex,
   Skeleton,
   SkeletonText,
+  Tooltip,
 } from '@chakra-ui/react';
 import { AuditLogEntry, fetchAuditLog } from '../utils/api';
 
@@ -132,14 +133,11 @@ export function AuditLogView() {
               <ChangesSummary entry={entry} />
             </Box>
             <Box textAlign="right" flexShrink={0}>
-              <Text
-                fontSize="xs"
-                color="gray.500"
-                title={new Date(entry.timestamp).toLocaleString()}
-                cursor="default"
-              >
-                {relativeTime(entry.timestamp)}
-              </Text>
+              <Tooltip label={new Date(entry.timestamp).toLocaleString()} placement="left" hasArrow>
+                <Text fontSize="xs" color="gray.500" cursor="default">
+                  {relativeTime(entry.timestamp)}
+                </Text>
+              </Tooltip>
               <Text fontSize="xs" color="gray.400">
                 {entry.city && entry.country
                   ? `${entry.city}, ${entry.country}`
