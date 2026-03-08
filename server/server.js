@@ -283,24 +283,26 @@ app.put('/api/items/:id', async (req, res) => {
 });
 
 // Refresh OG images for existing items
-app.post('/api/items/refresh-images', async (req, res) => {
-  try {
-    const force = req.query.force === 'true';
-    const items = await prisma.item.findMany({
-      where: {
-        link: { not: null },
-        ...(force ? {} : { imageUrl: null }),
-      },
-    });
-    res.set('Connection', 'close').json({ queued: items.length });
-    setImmediate(async () => {
+app.post('/api/items/refresh-images', (req, res) => {
+  const force = req.query.force === 'true';
+  res.json({ status: 'started' });
+  setImmediate(async () => {
+    try {
+      const items = await prisma.item.findMany({
+        where: {
+          link: { not: null },
+          ...(force ? {} : { imageUrl: null }),
+        },
+      });
+      console.log(`refresh-images: processing ${items.length} items`);
       for (const item of items) {
         await enrichItemImage(item);
       }
-    });
-  } catch (error) {
-    console.error('Error refreshing images:', error);
-  }
+      console.log('refresh-images: done');
+    } catch (error) {
+      console.error('refresh-images error:', error);
+    }
+  });
 });
 
 // Delete an item
