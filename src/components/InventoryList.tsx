@@ -20,6 +20,7 @@ import {
 import { DeleteIcon, EditIcon, SmallCloseIcon } from '@chakra-ui/icons';
 import { GearItem } from '../types';
 import { getTagColorScheme } from '../utils/tagColors';
+import { ItemImage } from './ItemImage';
 
 interface InventoryListProps {
   items: GearItem[];
@@ -65,7 +66,7 @@ const ItemCard = ({ item, onEdit, onDelete, onView }: ItemCardProps) => (
     borderRadius="lg"
     border="1px solid"
     borderColor="gray.200"
-    p={{ base: 3, md: 4 }}
+    overflow="hidden"
     display="flex"
     flexDirection="column"
     _hover={{ boxShadow: 'md', borderColor: 'gray.300' }}
@@ -73,6 +74,15 @@ const ItemCard = ({ item, onEdit, onDelete, onView }: ItemCardProps) => (
     cursor="pointer"
     onClick={onView}
   >
+    {/* Thumbnail */}
+    <ItemImage
+      imageUrl={item.imageUrl}
+      name={item.name}
+      height="140px"
+      borderRadius="none"
+    />
+
+    <Box p={{ base: 3, md: 4 }} display="flex" flexDirection="column" flex="1" w="full">
     {/* Name row */}
     <HStack justify="space-between" align="flex-start" mb={1}>
       <Text fontWeight="bold" fontSize={{ base: 'sm', md: 'md' }} flex="1" lineHeight="short" noOfLines={2}>
@@ -173,6 +183,7 @@ const ItemCard = ({ item, onEdit, onDelete, onView }: ItemCardProps) => (
         />
       </HStack>
     </HStack>
+    </Box>
   </Box>
 );
 

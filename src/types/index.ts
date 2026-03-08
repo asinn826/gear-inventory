@@ -5,6 +5,7 @@ export interface GearItem {
   quantity: number;
   isConsumable: boolean;
   link?: string | null;  // Optional product link
+  imageUrl?: string | null;
   tags: string[];
   createdAt: string;
   updatedAt: string;

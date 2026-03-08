@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -12,19 +9,33 @@ datasource db {
 }
 
 model Item {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  quantity    Int      @default(1)
+  id           String   @id @default(uuid())
+  name         String
+  description  String?
+  quantity     Int      @default(1)
   isConsumable Boolean  @default(false)
-  link        String?
-  tags        Tag[]    @relation("ItemTags")
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  link         String?
+  imageUrl     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  tags         Tag[]    @relation("ItemTags")
 }
 
 model Tag {
   id    String @id @default(uuid())
   name  String @unique
-  items Item[]  @relation("ItemTags")
+  items Item[] @relation("ItemTags")
+}
+
+model AuditLog {
+  id        String   @id
+  itemId    String
+  itemName  String
+  action    String
+  changes   Json?
+  ipAddress String?
+  userAgent String?
+  city      String?
+  country   String?
+  timestamp DateTime @default(now())
 }

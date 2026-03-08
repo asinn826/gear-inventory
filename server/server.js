@@ -62,6 +62,42 @@ async function writeAuditLog({ itemId, itemName, action, changes, ipAddress, use
   }
 }
 
+// --- OG image helpers ---
+
+async function fetchOGImage(url) {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+      },
+    });
+    clearTimeout(timeout);
+    if (!res.ok) return null;
+    const html = await res.text();
+    const match =
+      html.match(/<meta[^>]*property=["']og:image["'][^>]*content=["']([^"']+)["']/i) ||
+      html.match(/<meta[^>]*content=["']([^"']+)["'][^>]*property=["']og:image["']/i);
+    return match ? match[1] : null;
+  } catch {
+    return null;
+  }
+}
+
+async function enrichItemImage(item) {
+  if (!item.link) return;
+  try {
+    const imageUrl = await fetchOGImage(item.link);
+    if (imageUrl) {
+      await prisma.item.update({ where: { id: item.id }, data: { imageUrl } });
+    }
+  } catch (err) {
+    console.error('enrichItemImage error:', err);
+  }
+}
+
 // --- Item endpoints ---
 
 // Get all items with their tags
@@ -136,7 +172,8 @@ app.post('/api/items', async (req, res) => {
 
     res.status(201).json(formattedItem);
 
-    // Fire-and-forget audit log
+    // Fire-and-forget: enrich image + audit log
+    enrichItemImage(newItem);
     writeAuditLog({
       itemId: newItem.id,
       itemName: newItem.name,
@@ -213,6 +250,11 @@ app.put('/api/items/:id', async (req, res) => {
 
     res.json(formattedItem);
 
+    // Fire-and-forget: enrich image if link changed
+    if (updatedItem.link && updatedItem.link !== currentItem.link) {
+      enrichItemImage(updatedItem);
+    }
+
     // Compute diff for audit log
     const changes = {};
     for (const field of ['name', 'description', 'quantity', 'isConsumable', 'link']) {
@@ -237,6 +279,25 @@ app.put('/api/items/:id', async (req, res) => {
   } catch (error) {
     console.error('Error updating item:', error);
     res.status(500).json({ error: 'Failed to update item' });
+  }
+});
+
+// Refresh OG images for existing items
+app.post('/api/items/refresh-images', async (req, res) => {
+  try {
+    const force = req.query.force === 'true';
+    const items = await prisma.item.findMany({
+      where: {
+        link: { not: null },
+        ...(force ? {} : { imageUrl: null }),
+      },
+    });
+    res.json({ queued: items.length });
+    for (const item of items) {
+      await enrichItemImage(item);
+    }
+  } catch (error) {
+    console.error('Error refreshing images:', error);
   }
 });
 

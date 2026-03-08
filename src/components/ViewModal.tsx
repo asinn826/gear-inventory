@@ -20,6 +20,7 @@ import {
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import { GearItem } from '../types';
 import { getTagColorScheme } from '../utils/tagColors';
+import { ItemImage } from './ItemImage';
 
 interface ViewModalProps {
   item: GearItem | null;
@@ -82,6 +83,12 @@ export const ViewModal = ({ item, isOpen, onClose, onEdit }: ViewModalProps) => 
 
         <ModalBody>
           <VStack align="stretch" spacing={4}>
+            <ItemImage
+              imageUrl={item.imageUrl}
+              name={item.name}
+              height="220px"
+              borderRadius="md"
+            />
             {item.description && (
               <Box>
                 <Text fontSize="xs" fontWeight="semibold" color="gray.400" textTransform="uppercase" letterSpacing="wider" mb={1}>
