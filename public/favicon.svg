@@ -6,37 +6,18 @@
     </linearGradient>
   </defs>
 
-  <!-- Background rounded square -->
+  <!-- Background -->
   <rect width="100" height="100" rx="20" fill="url(#bg)"/>
 
-  <!-- Stars -->
-  <circle cx="20" cy="17" r="1.5" fill="white" opacity="0.55"/>
-  <circle cx="76" cy="12" r="1.5" fill="white" opacity="0.55"/>
-  <circle cx="87" cy="30" r="1"   fill="white" opacity="0.35"/>
-  <circle cx="14" cy="34" r="1"   fill="white" opacity="0.35"/>
+  <!-- Tent: bold white triangle, fills most of the icon -->
+  <path d="M50 10 L92 68 L8 68 Z" fill="white"/>
 
-  <!-- Tent body -->
-  <path d="M50 12 L88 54 L12 54 Z" fill="white" opacity="0.95"/>
+  <!-- Tent door: big enough to read at 16px -->
+  <path d="M50 68 L40 50 Q50 42 60 50 Z" fill="#1A4040"/>
 
-  <!-- Tent door (arched opening) -->
-  <path d="M50 54 L43 42 Q50 36 57 42 Z" fill="#1A4040"/>
-
-  <!-- Left pole -->
-  <rect x="11"   y="54" width="3.5" height="12" rx="1.5" fill="white" opacity="0.85"/>
-  <!-- Right pole -->
-  <rect x="85.5" y="54" width="3.5" height="12" rx="1.5" fill="white" opacity="0.85"/>
-
-  <!-- Ground shadow line -->
-  <rect x="8" y="65" width="84" height="2.5" rx="1.25" fill="white" opacity="0.18"/>
-
-  <!-- Backpack: main body -->
-  <rect x="40" y="50" width="20" height="26" rx="5" fill="#81E6D9"/>
-  <!-- Backpack: top compartment -->
-  <rect x="42" y="43" width="16" height="10" rx="3.5" fill="#81E6D9"/>
-  <!-- Backpack: handle loop -->
-  <path d="M45.5 43 Q50 38 54.5 43" stroke="#2C7A7B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  <!-- Backpack: front pocket -->
-  <rect x="43" y="58" width="14" height="13" rx="2.5" fill="#4FD1C5"/>
-  <!-- Pocket centre seam -->
-  <line x1="50" y1="58" x2="50" y2="71" stroke="#38B2AC" stroke-width="1.5"/>
+  <!-- Backpack: simplified to two bold shapes only -->
+  <!-- Body -->
+  <rect x="39" y="60" width="22" height="24" rx="5" fill="#4FD1C5"/>
+  <!-- Top compartment -->
+  <rect x="42" y="53" width="16" height="10" rx="3" fill="#4FD1C5"/>
 </svg>
